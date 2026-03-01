@@ -15,43 +15,60 @@ export class MCPProvider {
     private _watcher?: fs.FSWatcher;
 
     constructor() {
-        // mcp_config.json は親ディレクトリの直下にあると想定
-        // 開発環境では /home/irom/dev/mcp_config.json 
+        // デバッグ環境やフォルダ未選択時でも確実に mcp_config.json を見つけるための探索
         const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath || '';
-        this._configPath = path.join(workspacePath, '..', '..', 'mcp_config.json');
+        const possiblePaths = [
+            path.join(workspacePath, '..', 'mcp_config.json'),        // workspaceがmcp-monitorならここが親
+            '/home/irom/dev/mcp-servers/mcp_config.json',           // 実際の環境パス
+            path.join(workspacePath, '..', '..', 'mcp_config.json'),
+            '/home/irom/dev/mcp_config.json'
+        ];
 
-        // 存在しない場合は別のパスも試行
-        if (!fs.existsSync(this._configPath)) {
-            this._configPath = path.join(workspacePath, '..', 'mcp_config.json');
-        }
+        this._configPath = possiblePaths.find(p => fs.existsSync(p)) || possiblePaths[1];
     }
 
     public getServers(): MCPServerStatus[] {
         try {
             if (!fs.existsSync(this._configPath)) {
-                return [];
+                // デバッグ用: パスが見つからないことを通知
+                return [{
+                    name: `Error: Config not found at ${this._configPath}`,
+                    status: 'stopped',
+                    cpu: 0,
+                    memory: 0,
+                    tools: []
+                }];
             }
-            const configRaw = fs.readFileSync(this._configPath, 'utf8');
-            const config = JSON.parse(configRaw);
+
+            const configContent = fs.readFileSync(this._configPath, 'utf8');
+            const config = JSON.parse(configContent);
             const mcpServers = config.mcpServers || {};
 
-            return Object.keys(mcpServers).map(name => {
+            const servers = Object.keys(mcpServers).map(name => {
                 // 簡易的な稼働判定（ディレクトリの存在等で推測）
-                const serverPath = path.join(path.dirname(this._configPath), 'mcp-servers', name);
+                const serverPath = path.join(path.dirname(this._configPath), name);
                 const isActive = fs.existsSync(serverPath);
 
                 return {
                     name,
-                    status: isActive ? 'active' : 'stopped',
+                    status: (isActive ? 'active' : 'stopped') as 'active' | 'stopped',
                     // インテリジェントな揺らぎ計算
                     cpu: isActive ? Math.floor(Math.random() * 15) + 5 : 0,
                     memory: isActive ? Math.floor(Math.random() * 10) + 20 : 0,
                     tools: this._inferTools(name, mcpServers[name])
                 };
             });
+
+            return servers;
         } catch (error) {
             console.error('Error reading mcp_config.json:', error);
-            return [];
+            return [{
+                name: 'Error: Failed to parse config',
+                status: 'stopped' as 'active' | 'stopped',
+                cpu: 0,
+                memory: 0,
+                tools: []
+            }];
         }
     }
 

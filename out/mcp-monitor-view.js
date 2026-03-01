@@ -50,6 +50,10 @@ class MCPMonitorViewProvider {
         }, 500);
         webviewView.webview.onDidReceiveMessage(data => {
             switch (data.type) {
+                case 'ready':
+                    // Webview の準備ができたら即座にデータを送る
+                    this.refresh();
+                    break;
                 case 'refresh':
                     this.refresh();
                     break;
@@ -58,7 +62,7 @@ class MCPMonitorViewProvider {
     }
     _updateWebview(servers) {
         if (this._view) {
-            this._view.webview.postMessage({ type: 'update', data: servers });
+            this._view.webview.postMessage({ type: 'update', servers: servers });
         }
     }
     refresh() {
@@ -80,7 +84,7 @@ class MCPMonitorViewProvider {
             <body>
                 <div class="dashboard">
                     <header>
-                        <h1>MCP Monitor</h1>
+                        <h1>MCP Monitor v1.1</h1>
                         <div class="pulse-indicator"></div>
                     </header>
                     <div id="server-list" class="server-list">
