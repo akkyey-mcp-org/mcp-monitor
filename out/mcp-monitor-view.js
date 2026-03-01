@@ -46,7 +46,7 @@ class MCPMonitorViewProvider {
         });
         // 初回表示
         setTimeout(() => {
-            this._updateWebview(this._mcpProvider.getServers());
+            this.refresh();
         }, 500);
         webviewView.webview.onDidReceiveMessage(data => {
             switch (data.type) {
@@ -61,8 +61,13 @@ class MCPMonitorViewProvider {
         });
     }
     _updateWebview(servers) {
+        // デバッグ用ログ
+        console.log('Updating Webview with servers:', JSON.stringify(servers.map(s => ({ name: s.name, status: s.status }))));
         if (this._view) {
-            this._view.webview.postMessage({ type: 'update', servers: servers });
+            this._view.webview.postMessage({
+                type: 'update',
+                servers: servers
+            });
         }
     }
     refresh() {
@@ -84,8 +89,7 @@ class MCPMonitorViewProvider {
             <body>
                 <div class="dashboard">
                     <header>
-                        <h1>MCP Monitor v1.1</h1>
-                        <div class="pulse-indicator"></div>
+                        <h1>MCP Monitor v1.3</h1>
                     </header>
                     <div id="server-list" class="server-list">
                         <div class="loading-spinner">Initializing Antigravity Engine...</div>

@@ -57,6 +57,7 @@ class MCPProvider {
         const homeDir = process.env.HOME || process.env.USERPROFILE || '';
         const standardPaths = [
             path.join(homeDir, '.config', 'google-antigravity', 'mcp_config.json'),
+            path.join(homeDir, 'dev', 'mcp-servers', 'mcp_config.json'),
             path.join(homeDir, 'mcp_config.json')
         ];
         for (const p of standardPaths) {
@@ -92,8 +93,8 @@ class MCPProvider {
                 return {
                     name,
                     status: (isActive ? 'active' : 'stopped'),
-                    cpu: isActive ? Math.floor(Math.random() * 15) + 5 : 0,
-                    memory: isActive ? Math.floor(Math.random() * 10) + 20 : 0,
+                    cpu: isActive ? 5 : 0,
+                    memory: isActive ? 20 : 0,
                     tools: this._inferTools(name, serverConfig)
                 };
             });

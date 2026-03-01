@@ -1,0 +1,14 @@
+.vscode/**
+.vscode-test/**
+.git/**
+.gitmodules
+.gemini
+.agent
+GEMINI.md
+src/**
+tsconfig.json
+.eslintrc.json
+package-lock.json
+**/tsconfig.json
+**/*.ts
+**/*.map
