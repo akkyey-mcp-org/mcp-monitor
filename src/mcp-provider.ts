@@ -15,16 +15,46 @@ export class MCPProvider {
     private _watcher?: fs.FSWatcher;
 
     constructor() {
-        // デバッグ環境やフォルダ未選択時でも確実に mcp_config.json を見つけるための探索
+        this._configPath = this._resolveConfigPath();
+    }
+
+    private _resolveConfigPath(): string {
+        // 1. VS Code 設定を確認
+        const userConfigPath = vscode.workspace.getConfiguration('mcpMonitor').get<string>('configPath');
+        if (userConfigPath && fs.existsSync(userConfigPath)) {
+            return userConfigPath;
+        }
+
+        // 2. 環境変数を確認
+        if (process.env.MCP_CONFIG_PATH && fs.existsSync(process.env.MCP_CONFIG_PATH)) {
+            return process.env.MCP_CONFIG_PATH;
+        }
+
+        // 3. ワークスペース内と親ディレクトリを探索
         const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath || '';
-        const possiblePaths = [
-            path.join(workspacePath, '..', 'mcp_config.json'),        // workspaceがmcp-monitorならここが親
-            '/home/irom/dev/mcp-servers/mcp_config.json',           // 実際の環境パス
-            path.join(workspacePath, '..', '..', 'mcp_config.json'),
-            '/home/irom/dev/mcp_config.json'
+        if (workspacePath) {
+            let current = workspacePath;
+            const root = path.parse(current).root;
+            while (current !== root) {
+                const p = path.join(current, 'mcp_config.json');
+                if (fs.existsSync(p)) return p;
+                current = path.dirname(current);
+            }
+        }
+
+        // 4. ホームディレクトリや標準パスを確認
+        const homeDir = process.env.HOME || process.env.USERPROFILE || '';
+        const standardPaths = [
+            path.join(homeDir, '.config', 'google-antigravity', 'mcp_config.json'),
+            path.join(homeDir, 'mcp_config.json')
         ];
 
-        this._configPath = possiblePaths.find(p => fs.existsSync(p)) || possiblePaths[1];
+        for (const p of standardPaths) {
+            if (fs.existsSync(p)) return p;
+        }
+
+        // デフォルト (見つからない場合はエラー表示用として残す)
+        return path.join(homeDir, 'mcp_config.json');
     }
 
     public getServers(): MCPServerStatus[] {
@@ -45,17 +75,22 @@ export class MCPProvider {
             const mcpServers = config.mcpServers || {};
 
             const servers = Object.keys(mcpServers).map(name => {
-                // 簡易的な稼働判定（ディレクトリの存在等で推測）
-                const serverPath = path.join(path.dirname(this._configPath), name);
-                const isActive = fs.existsSync(serverPath);
+                const serverConfig = mcpServers[name];
+
+                // 簡易的な稼働判定
+                // 1. 設定ファイルと同じ階層にソースがあるか確認 (開発用)
+                const relativeSourcePath = path.join(path.dirname(this._configPath), name);
+                let isActive = fs.existsSync(relativeSourcePath);
+
+                // 2. 将来的にはプロセス一覧から推定するロジックを追加可能
+                // 現在はランダムな負荷計算でデモ表示
 
                 return {
                     name,
                     status: (isActive ? 'active' : 'stopped') as 'active' | 'stopped',
-                    // インテリジェントな揺らぎ計算
                     cpu: isActive ? Math.floor(Math.random() * 15) + 5 : 0,
                     memory: isActive ? Math.floor(Math.random() * 10) + 20 : 0,
-                    tools: this._inferTools(name, mcpServers[name])
+                    tools: this._inferTools(name, serverConfig)
                 };
             });
 

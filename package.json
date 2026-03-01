@@ -38,7 +38,17 @@
         "title": "Refresh MCP Status",
         "icon": "$(refresh)"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "MCP Monitor",
+      "properties": {
+        "mcpMonitor.configPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to mcp_config.json. If empty, it searches for it in workspace folders and standard locations."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
