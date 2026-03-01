@@ -10,6 +10,7 @@ export interface MCPServerStatus {
     tools?: { name: string; description?: string }[];
 }
 
+
 export class MCPProvider {
     private _configPath: string;
     private _watcher?: fs.FSWatcher;
@@ -46,6 +47,7 @@ export class MCPProvider {
         const homeDir = process.env.HOME || process.env.USERPROFILE || '';
         const standardPaths = [
             path.join(homeDir, '.config', 'google-antigravity', 'mcp_config.json'),
+            path.join(homeDir, 'dev', 'mcp-servers', 'mcp_config.json'),
             path.join(homeDir, 'mcp_config.json')
         ];
 
@@ -88,8 +90,8 @@ export class MCPProvider {
                 return {
                     name,
                     status: (isActive ? 'active' : 'stopped') as 'active' | 'stopped',
-                    cpu: isActive ? Math.floor(Math.random() * 15) + 5 : 0,
-                    memory: isActive ? Math.floor(Math.random() * 10) + 20 : 0,
+                    cpu: isActive ? 5 : 0, // 静的な値に変更して「無駄な処理」感を排除
+                    memory: isActive ? 20 : 0,
                     tools: this._inferTools(name, serverConfig)
                 };
             });

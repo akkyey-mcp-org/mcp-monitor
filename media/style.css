@@ -56,7 +56,6 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
 }
 
 .server-name {
@@ -98,80 +97,4 @@ h1 {
 
 .status-offline::before {
     background: var(--text-dim);
-}
-
-/* コンテンツ */
-.metrics-container {
-    padding: 8px 10px;
-    border-top: 1px solid var(--border-dim);
-    transition: all 0.2s ease;
-}
-
-.server-card.collapsed .metrics-container {
-    display: none;
-    /* 畳んだ時は完全に消す */
-}
-
-/* メトリクス・グリッド（横並び） */
-.metrics-grid {
-    display: flex;
-    gap: 12px;
-}
-
-.metric-row {
-    flex: 1;
-}
-
-.metric-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 8px;
-    color: var(--text-dim);
-    margin-bottom: 2px;
-}
-
-.metric-value {
-    color: #cbd5e1;
-    font-weight: 700;
-}
-
-/* 極細プログレスバー */
-.progress-container {
-    height: 3px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 2px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    transition: width 0.4s ease;
-}
-
-.metric-row:nth-child(1) .progress-bar {
-    background: var(--accent-cyan);
-}
-
-.metric-row:nth-child(2) .progress-bar {
-    background: var(--accent-purple);
-}
-
-/* ツールタグ（タイトに） */
-.tool-list {
-    margin-top: 6px;
-    padding-top: 6px;
-    border-top: 1px dashed var(--border-dim);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 3px;
-}
-
-.tool-tag {
-    font-size: 8px;
-    background: rgba(255, 255, 255, 0.03);
-    color: #7dd3fc;
-    border: 1px solid rgba(56, 189, 248, 0.1);
-    padding: 1px 4px;
-    border-radius: 3px;
-    font-family: var(--vscode-editor-font-family, monospace);
 }

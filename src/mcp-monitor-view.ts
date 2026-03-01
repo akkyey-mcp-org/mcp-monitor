@@ -35,7 +35,7 @@ export class MCPMonitorViewProvider implements vscode.WebviewViewProvider {
 
         // 初回表示
         setTimeout(() => {
-            this._updateWebview(this._mcpProvider.getServers());
+            this.refresh();
         }, 500);
 
         webviewView.webview.onDidReceiveMessage(data => {
@@ -52,8 +52,15 @@ export class MCPMonitorViewProvider implements vscode.WebviewViewProvider {
     }
 
     private _updateWebview(servers: any[]) {
+        // デバッグ用ログ
+        console.log('Updating Webview with servers:', JSON.stringify(servers.map(s => ({ name: s.name, status: s.status }))));
+
+
         if (this._view) {
-            this._view.webview.postMessage({ type: 'update', servers: servers });
+            this._view.webview.postMessage({
+                type: 'update',
+                servers: servers
+            });
         }
     }
 
@@ -79,8 +86,7 @@ export class MCPMonitorViewProvider implements vscode.WebviewViewProvider {
             <body>
                 <div class="dashboard">
                     <header>
-                        <h1>MCP Monitor v1.1</h1>
-                        <div class="pulse-indicator"></div>
+                        <h1>MCP Monitor v1.3</h1>
                     </header>
                     <div id="server-list" class="server-list">
                         <div class="loading-spinner">Initializing Antigravity Engine...</div>
