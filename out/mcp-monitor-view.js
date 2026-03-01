@@ -80,12 +80,11 @@ class MCPMonitorViewProvider {
             <body>
                 <div class="dashboard">
                     <header>
-                        <h1>MCP Status</h1>
+                        <h1>MCP Monitor</h1>
                         <div class="pulse-indicator"></div>
                     </header>
                     <div id="server-list" class="server-list">
-                        <!-- Servers will be injected here -->
-                        <div class="loading">Loading MCP Servers...</div>
+                        <div class="loading-spinner">Initializing Antigravity Engine...</div>
                     </div>
                 </div>
                 <script nonce="${nonce}" src="${scriptUri}"></script>
