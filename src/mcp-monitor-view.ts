@@ -28,12 +28,12 @@ export class MCPMonitorViewProvider implements vscode.WebviewViewProvider {
 
         webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-        // ファイル監視の開始
+        // 
         this._mcpProvider.watchConfig((servers) => {
             this._updateWebview(servers);
         });
 
-        // 初回表示
+        // 
         setTimeout(() => {
             this.refresh();
         }, 500);
@@ -41,7 +41,7 @@ export class MCPMonitorViewProvider implements vscode.WebviewViewProvider {
         webviewView.webview.onDidReceiveMessage(data => {
             switch (data.type) {
                 case 'ready':
-                    // Webview の準備ができたら即座にデータを送る
+                    // Webview 
                     this.refresh();
                     break;
                 case 'refresh':
@@ -52,7 +52,7 @@ export class MCPMonitorViewProvider implements vscode.WebviewViewProvider {
     }
 
     private _updateWebview(servers: any[]) {
-        // デバッグ用ログ
+        // 
         console.log('Updating Webview with servers:', JSON.stringify(servers.map(s => ({ name: s.name, status: s.status }))));
 
 

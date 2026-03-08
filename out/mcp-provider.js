@@ -32,16 +32,16 @@ class MCPProvider {
         this._configPath = this._resolveConfigPath();
     }
     _resolveConfigPath() {
-        // 1. VS Code 設定を確認
+        // 1. VS Code 
         const userConfigPath = vscode.workspace.getConfiguration('mcpMonitor').get('configPath');
         if (userConfigPath && fs.existsSync(userConfigPath)) {
             return userConfigPath;
         }
-        // 2. 環境変数を確認
+        // 2. 
         if (process.env.MCP_CONFIG_PATH && fs.existsSync(process.env.MCP_CONFIG_PATH)) {
             return process.env.MCP_CONFIG_PATH;
         }
-        // 3. ワークスペース内と親ディレクトリを探索
+        // 3. 
         const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath || '';
         if (workspacePath) {
             let current = workspacePath;
@@ -53,7 +53,7 @@ class MCPProvider {
                 current = path.dirname(current);
             }
         }
-        // 4. ホームディレクトリや標準パスを確認
+        // 4. 
         const homeDir = process.env.HOME || process.env.USERPROFILE || '';
         const standardPaths = [
             path.join(homeDir, '.config', 'google-antigravity', 'mcp_config.json'),
@@ -64,13 +64,13 @@ class MCPProvider {
             if (fs.existsSync(p))
                 return p;
         }
-        // デフォルト (見つからない場合はエラー表示用として残す)
+        //  ()
         return path.join(homeDir, 'mcp_config.json');
     }
     getServers() {
         try {
             if (!fs.existsSync(this._configPath)) {
-                // デバッグ用: パスが見つからないことを通知
+                // : 
                 return [{
                         name: `Error: Config not found at ${this._configPath}`,
                         status: 'stopped',
@@ -84,12 +84,12 @@ class MCPProvider {
             const mcpServers = config.mcpServers || {};
             const servers = Object.keys(mcpServers).map(name => {
                 const serverConfig = mcpServers[name];
-                // 簡易的な稼働判定
-                // 1. 設定ファイルと同じ階層にソースがあるか確認 (開発用)
+                // 
+                // 1.  ()
                 const relativeSourcePath = path.join(path.dirname(this._configPath), name);
                 let isActive = fs.existsSync(relativeSourcePath);
-                // 2. 将来的にはプロセス一覧から推定するロジックを追加可能
-                // 現在はランダムな負荷計算でデモ表示
+                // 2. 
+                // 
                 return {
                     name,
                     status: (isActive ? 'active' : 'stopped'),
@@ -112,8 +112,8 @@ class MCPProvider {
         }
     }
     _inferTools(name, config) {
-        // 本来は各サーバーの inspector から取得すべきだが、
-        // 今回は設定やディレクトリ構造から代表的なツールを推測表示する
+        //  inspector 
+        // 
         if (name === 'git-task-server') {
             return [
                 { name: 'git_status', description: 'Check git status' },

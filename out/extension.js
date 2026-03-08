@@ -28,10 +28,10 @@ const vscode = __importStar(require("vscode"));
 const mcp_monitor_view_1 = require("./mcp-monitor-view");
 function activate(context) {
     console.log('mcp-monitor is now active');
-    // Webview View Provider の登録
+    // Webview View Provider 
     const provider = new mcp_monitor_view_1.MCPMonitorViewProvider(context.extensionUri);
     context.subscriptions.push(vscode.window.registerWebviewViewProvider(mcp_monitor_view_1.MCPMonitorViewProvider.viewType, provider));
-    // リフレッシュコマンドの登録
+    // 
     context.subscriptions.push(vscode.commands.registerCommand('mcp-monitor.refresh', () => {
         provider.refresh();
         vscode.window.showInformationMessage('Refreshing MCP server status...');

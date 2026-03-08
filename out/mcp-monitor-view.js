@@ -40,18 +40,18 @@ class MCPMonitorViewProvider {
             ]
         };
         webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-        // ファイル監視の開始
+        // 
         this._mcpProvider.watchConfig((servers) => {
             this._updateWebview(servers);
         });
-        // 初回表示
+        // 
         setTimeout(() => {
             this.refresh();
         }, 500);
         webviewView.webview.onDidReceiveMessage(data => {
             switch (data.type) {
                 case 'ready':
-                    // Webview の準備ができたら即座にデータを送る
+                    // Webview 
                     this.refresh();
                     break;
                 case 'refresh':
@@ -61,7 +61,7 @@ class MCPMonitorViewProvider {
         });
     }
     _updateWebview(servers) {
-        // デバッグ用ログ
+        // 
         console.log('Updating Webview with servers:', JSON.stringify(servers.map(s => ({ name: s.name, status: s.status }))));
         if (this._view) {
             this._view.webview.postMessage({
