@@ -9,3 +9,6 @@ full-context
 *_full_context.md
 blog
 ideas
+
+# Safe Shell Temporary Directory
+.safe_shell_tmp

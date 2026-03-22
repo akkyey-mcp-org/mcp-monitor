@@ -64,8 +64,8 @@ export class MCPMonitorViewProvider implements vscode.WebviewViewProvider {
         }
     }
 
-    public refresh() {
-        const servers = this._mcpProvider.getServers();
+    public async refresh() {
+        const servers = await this._mcpProvider.getServers();
         this._updateWebview(servers);
     }
 
@@ -86,10 +86,11 @@ export class MCPMonitorViewProvider implements vscode.WebviewViewProvider {
             <body>
                 <div class="dashboard">
                     <header>
-                        <h1>MCP Monitor v1.3</h1>
+                        <h1>Antigravity Hub <span class="version-tag">V2.1</span></h1>
+                        <div class="session-badge">${this._mcpProvider.sessionId.substring(0, 8)}</div>
                     </header>
                     <div id="server-list" class="server-list">
-                        <div class="loading-spinner">Initializing Antigravity Engine...</div>
+                        <div class="loading-spinner">Synchronizing with MCP Core...</div>
                     </div>
                 </div>
                 <script nonce="${nonce}" src="${scriptUri}"></script>
